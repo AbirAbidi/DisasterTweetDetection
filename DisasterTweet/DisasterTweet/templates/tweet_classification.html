@@ -1,0 +1,229 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tweet Classification</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Body and background with Twitter logo */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+
+            /* Background with repeating Twitter logo */
+            
+            background-repeat: repeat; /* Repeat the logo across the screen */
+            animation: moveBackground 40s ease-in-out infinite; /* Slower and smoother movement */
+            
+        }
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('{% static "twitter.png" %}');
+            background-size: 350px 350px; /* Larger size for the logo */
+            background-repeat: repeat;
+            animation: moveBackground 40s ease-in-out infinite;
+            opacity: 0.3; /* Adjust the opacity of the logo here (0.3 = 30% opacity) */
+            z-index: 1; /* Ensure the logo stays under the content */
+        }
+        /* Animation to move the background */
+        @keyframes moveBackground {
+            0% {
+                background-position: 0 0;
+            }
+            50% {
+                background-position: 50% 50%; /* Center of the screen */
+            }
+            100% {
+                background-position: 100% 100%; /* Move the background diagonally */
+            }
+        }
+
+        /* Classification box styling */
+        .classification-box {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10; /* Ensure it stays above the background */
+        }
+
+        .classification-box h1 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .classification-box textarea {
+            width: 100%; /* Full width of the container */
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    resize: vertical; /* Allow vertical resizing */
+    min-height: 100px; /* Minimum height */
+    max-height: 200px; /* Maximum height */
+    box-sizing: border-box; /* Include padding and border in the width */
+    font-family: Arial, sans-serif; /* Consistent font */
+    outline: none; /* Remove default focus outline */
+    transition: border-color 0.3s ease;
+        }
+        .classification-box textarea:focus {
+            border-color: #1DA1F2; /* Highlight border on focus */
+        }
+        .classification-box .btn {
+            background-color: #1DA1F2;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            max-width: 250px;
+            transition: background-color 0.3s ease;
+        }
+
+        .classification-box .btn:hover {
+            background-color: #1991C6;
+        }
+
+        .classification-box .options {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 250px;
+        }
+
+        .classification-box select.dropdown-menu {
+            width: 100%;
+            max-width: 250px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            background-color: #fff;
+            cursor: pointer;
+            outline: none; /* Remove default focus outline */
+    transition: border-color 0.3s ease;
+        }
+
+        /* Result styling */
+        .result {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Responsive adjustments */
+@media (max-width: 480px) {
+    .classification-box {
+        padding: 20px; /* Smaller padding for smaller screens */
+    }
+
+    .classification-box h1 {
+        font-size: 1.3rem; /* Smaller heading for smaller screens */
+    }
+
+    .classification-box textarea {
+        font-size: 0.9rem; /* Smaller font size for smaller screens */
+    }
+
+    .classification-box .btn {
+        font-size: 0.9rem; /* Smaller button text for smaller screens */
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Main classification box -->
+    <div class="classification-box">
+        <h1>Tweet Classification</h1>
+        
+        <!-- Form to take tweet input and select model -->
+        <form id="classification-form" method="POST">
+            {% csrf_token %}
+            <textarea id="tweet" name="tweet" rows="5" cols="50" placeholder="Enter your tweet here..."></textarea><br><br>
+            
+            <select id="model" name="model" class="dropdown-menu">
+                <option value="option1">Logistic Regression</option>
+                <option value="option2">Support Vector Machine (SVM)</option>
+                <option value="option3">Random Forest</option>
+                <option value="option4">XGBoost</option>
+                <option value="option5">LightGBM</option>
+                <option value="option6">BERT (Bidirectional Encoder Representations from Transformers)</option>
+                <option value="option7">CatBoost</option>
+                <option value="option8">StackingClassifier</option>
+            </select><br><br>
+    
+            <button type="button" id="classify" class="btn">Classify</button>
+        </form>
+        
+        <!-- Result will be displayed here -->
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Handle the classify button click
+            $('#classify').click(function() {
+                // Get the tweet and selected model
+                var tweet = $('#tweet').val();
+                var model = $('#model').val();
+        
+                // Send an AJAX request to the server
+                $.ajax({
+                    url: "{% url 'classify_tweet' %}",  // URL to the classify_tweet view
+                    method: 'POST',
+                    headers: {
+                        "X-CSRFToken": '{{ csrf_token }}'  // Include CSRF token in headers
+                    },
+                    data: JSON.stringify({  // Convert data to JSON
+                        tweet: tweet,
+                        model_choice: model
+                    }),
+                    contentType: 'application/json',  // Set content type to JSON
+                    success: function(response) {
+                        // Display the result
+                        if (response.result === 1) {
+                            $('#result').html('This tweet is classified as a <span style="color: red;">disaster-related</span> tweet.');
+                        } else {
+                            $('#result').html('This tweet is classified as a <span style="color: green;">non-disaster-related</span> tweet.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle errors
+                        $('#result').html('An error occurred. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

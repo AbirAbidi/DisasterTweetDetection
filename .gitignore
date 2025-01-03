@@ -1,0 +1,9 @@
+# Ignore virtual environment
+venv/
+
+# Ignore large files
+*.pkl
+*.pt
+*.pyd
+*.dll
+*.lib

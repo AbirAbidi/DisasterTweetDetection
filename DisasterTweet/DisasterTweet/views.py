@@ -111,9 +111,26 @@ class TweetPreprocessor:
     def __init__(self):
         self.known_abbreviations = {
             # Basic Internet Slang
-            "u": "you", "pls": "please", "bc": "because", "idk": "i do not know", "omg": "oh my god", 
-            "btw": "by the way", "fyi": "for your information", "ttyl": "talk to you later", "lmao": "laughing my ass off",
-            # ... (add other abbreviations here)
+            "u": "you","pls": "please","bc": "because","idk": "i do not know","omg": "oh my god","btw": "by the way","fyi": "for your information","ttyl": "talk to you later","lmao": "laughing my ass off","brb": "be right back","smh": "shaking my head","np": "no problem","cya": "see you","gtg": "got to go","lol": "laugh out loud","l8r": "later","gr8": "great","bff": "best friends forever","bffl": "best friends for life","fomo": "fear of missing out","yolo": "you only live once",
+            # Extended Internet Expressions
+            "omfg": "oh my f**king god","ftw": "for the win","b4": "before","xoxo": "hugs and kisses","hmu": "hit me up","glhf": "good luck have fun","rdy": "ready","plz": "please","ttfn": "ta ta for now","rofl": "rolling on the floor laughing","tbh": "to be honest","tbf": "to be fair","wbu": "what about you","lmk": "let me know","cu": "see you","bday": "birthday","bbl": "be back later","oic": "oh i see","yasss": "yes","lmfao": "laughing my f**king ass off",
+            # Social Media Terms
+            "bruh": "bro","fam": "family close friends","bae": "before anyone else","swag": "confident cool style","nm": "not much","tmi": "too much information","r": "are","imho": "in my humble opinion","woot": "expression of joy or excitement","ik": "i know","omw": "on my way","gr8t": "great","roflmao": "rolling on the floor laughing my ass off",
+            # Modern Slang
+            "wtf": "what the f**k", "wtbs": "whatever the bullshit", "lolz": "laugh out loud variation", "g2g": "got to go", "u2": "you too", "rly": "really", "omgosh": "oh my gosh", "ymmv": "your mileage may vary", "sis": "sister", "bro": "brother", "squad": "group of friends", "lit": "cool awesome", "salty": "being upset or angry", "sav": "savage", "flex": "show off", "no cap": "honestly no exaggeration",
+
+            # Common Actions
+            "h8": "hate", "jk": "just kidding", "nvm": "never mind", "gonna": "going to", "wanna": "want to", "gimme": "give me", "yass": "yes enthusiastic", "l8": "late", "lolol": "laugh out loud", "lms": "like my status",
+            # Practical Abbreviations
+            "j/w": "just wondering", "ppl": "people", "msg": "message", "msgs": "messages", "thx": "thanks", "ty": "thank you", "pic": "picture", "pics": "pictures", "prob": "probably", "rn": "right now",
+            # With Symbols
+            "w/": "with", "w/o": "without", "dm": "direct message", "rt": "retweet", "fb": "facebook",
+            # Time Related
+            "hrs": "hours", "hr": "hour", "min": "minute", "mins": "minutes", "sec": "second", "secs": "seconds", "am": "morning", "pm": "evening", "tmr": "tomorrow", "tmrw": "tomorrow",
+            # Miscellaneous
+            "tho": "though", "k": "thousand", "vs": "versus", "etc": "etcetera", "apt": "apartment", "apts": "apartments", "bldg": "building", "yr": "year", "yrs": "years", "ur": "your", "asap": "as soon as possible", "faq": "frequently asked questions",
+            # Emergency Related
+            "sos": "help", "emg": "emergency","evac": "evacuate",
         }
         self.numeric_abbreviations = {
             "2": "to", "4": "for"

@@ -4,6 +4,14 @@ venv/
 # Ignore large files
 *.pkl
 *.pt
-*.pyd
 *.dll
 *.lib
+*.pyd
+
+# Ignore Python compiled files
+__pycache__/
+*.pyc
+
+# Ignore IDE files
+.vscode/
+.idea/
